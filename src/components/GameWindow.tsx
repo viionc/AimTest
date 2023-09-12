@@ -1,7 +1,6 @@
 import {Col} from "react-bootstrap";
 import Game from "./Game";
 import ScoreBoard from "./ScoreBoard";
-import {useGameStatus} from "../context/useGameStatusContext";
 
 export default function GameWindow() {
     return (

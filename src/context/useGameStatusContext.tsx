@@ -1,5 +1,4 @@
 import {ReactNode, createContext, useContext, useState} from "react";
-import Target from "../components/Target";
 
 export type TargetProps = {
     position: Position;
@@ -34,6 +33,13 @@ type GameStatusContext = {
     gameStarted: boolean;
     setGameStarted: Function;
     targetsMissed: number;
+    currentTimer: number;
+    setCurrentTimer: Function;
+    setSelectedTimer: Function;
+    selectedTimer: number;
+    restartStats: () => void;
+    setSelectedSpeed: Function;
+    selectedSpeed: number;
 };
 
 const GameStatusContext = createContext({} as GameStatusContext);
@@ -48,7 +54,8 @@ export function useGameStatus() {
 
 export function GameStatusProvider({children}: GameStatusProviderProps) {
     const [score, setScore] = useState(0);
-    const [speed, setSpeed] = useState(1);
+    const [selectedSpeed, setSelectedSpeed] = useState(1);
+    const [speed, setSpeed] = useState(selectedSpeed);
     const [missedClicks, setMissedClicks] = useState(0);
     const [clicks, setClicks] = useState(0);
     const [targetsClicked, setTargetsClicked] = useState(0);
@@ -56,6 +63,8 @@ export function GameStatusProvider({children}: GameStatusProviderProps) {
     const [targets, setTargets] = useState([] as TargetProps[]);
     const [gameStarted, setGameStarted] = useState(false);
     const [targetsMissed, setTargetsMissed] = useState(0);
+    const [selectedTimer, setSelectedTimer] = useState(60);
+    const [currentTimer, setCurrentTimer] = useState(selectedTimer);
 
     const [gameResolution, setGameResolution] = useState({x: 1200, y: 800} as Position);
 
@@ -71,6 +80,7 @@ export function GameStatusProvider({children}: GameStatusProviderProps) {
         let positionX = Math.floor(Math.random() * maxX);
         let positionY = Math.floor(Math.random() * maxY);
         return {x: positionX, y: positionY};
+        setTargetSize(0);
     };
 
     const createNewTarget = () => {
@@ -101,6 +111,16 @@ export function GameStatusProvider({children}: GameStatusProviderProps) {
         setGameResolution({x, y});
     }
 
+    function restartStats() {
+        setCurrentTimer(selectedTimer);
+        setTargets([]);
+        setScore(0);
+        setMissedClicks(0);
+        setTargetsMissed(0);
+        setSpeed(selectedSpeed);
+        setTargetsClicked(0);
+    }
+
     return (
         <GameStatusContext.Provider
             value={{
@@ -124,6 +144,13 @@ export function GameStatusProvider({children}: GameStatusProviderProps) {
                 gameStarted,
                 setGameStarted,
                 targetsMissed,
+                currentTimer,
+                setCurrentTimer,
+                setSelectedTimer,
+                selectedTimer,
+                restartStats,
+                setSelectedSpeed,
+                selectedSpeed,
             }}
         >
             {children}

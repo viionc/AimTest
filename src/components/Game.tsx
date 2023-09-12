@@ -17,13 +17,20 @@ export default function Game() {
         score,
         gameStarted,
         setGameStarted,
+        currentTimer,
+        setCurrentTimer,
+        restartStats,
     } = useGameStatus();
-    const [timer, setTimer] = useState(15);
     const [lastSpeedChange, setLastSpeedChange] = useState(0);
 
-    function gameAreaClicked(e) {
+    function gameAreaClicked(e: any) {
         if (e.target.closest(".target")) return;
         setMissedClicks((prev: number) => prev + 1);
+    }
+
+    function startGame() {
+        restartStats();
+        setGameStarted(true);
     }
 
     useEffect(() => {
@@ -48,7 +55,6 @@ export default function Game() {
 
     useEffect(() => {
         if (!gameStarted) return;
-        console.log(1000 / speed);
         const interval = setInterval(() => {
             setTargets((prev: TargetProps[]) => {
                 let newTarget = createNewTarget();
@@ -64,14 +70,14 @@ export default function Game() {
     useEffect(() => {
         if (targetsClicked % 4 == 0 && targetsClicked != lastSpeedChange && targetsClicked) {
             setSpeed((prev: number) => (prev += 0.3));
-            setLastSpeedChange(prev => (prev = targetsClicked));
+            setLastSpeedChange(targetsClicked);
         }
     }, [targetsClicked]);
 
     useEffect(() => {
         if (!gameStarted) return;
         const interval = setInterval(() => {
-            setTimer((prev: number) => {
+            setCurrentTimer((prev: number) => {
                 if (prev <= 0) setGameStarted(false);
                 return (prev -= 0.1);
             });
@@ -90,7 +96,11 @@ export default function Game() {
             onClick={e => gameAreaClicked(e)}
         >
             <div className="d-flex justify-content-between">
-                <h1 className="text-white">{Math.floor(timer)}</h1>{" "}
+                {currentTimer > 0 ? (
+                    <h1 className="text-white">{Math.floor(currentTimer)}</h1>
+                ) : (
+                    <h1 className="text-white">Game Ended</h1>
+                )}
                 <h1 className="text-white">{score}</h1>
             </div>
 
@@ -104,7 +114,7 @@ export default function Game() {
                         padding: "15px",
                         fontSize: "2rem",
                     }}
-                    onClick={() => setGameStarted(true)}
+                    onClick={() => startGame()}
                 >
                     Start Game
                 </Button>

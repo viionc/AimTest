@@ -7,7 +7,7 @@ type Target = {
 };
 
 const Target = (props: {target: TargetProps}) => {
-    const {speed, updateTargets, setTargetsClicked, setScore, gameStarted} = useGameStatus();
+    const {updateTargets, setTargetsClicked, setScore, gameStarted} = useGameStatus();
     const handleClick = (target: TargetProps) => {
         if (!gameStarted) return;
         target.growing = false;
