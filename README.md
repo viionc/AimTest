@@ -4,4 +4,4 @@
 
 https://viionc.github.io/AimTest/
 
-App build with Vite, mostly used to practice React hooks (useState, useEffect, useContext). Learned usage of setInterval inside useEffect hook and updating states on said interval.
+App built with Vite, mostly used to practice React hooks (useState, useEffect, useContext). Learned usage of setInterval inside useEffect hook and updating states on said interval.
