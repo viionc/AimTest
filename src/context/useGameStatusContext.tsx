@@ -5,6 +5,7 @@ export type TargetProps = {
     size: number;
     growing: boolean;
     clicked: boolean;
+    aliveFor: number;
 };
 
 type Position = {
@@ -40,6 +41,8 @@ type GameStatusContext = {
     restartStats: () => void;
     setSelectedSpeed: Function;
     selectedSpeed: number;
+    targetMode: string;
+    setTargetMode: Function;
 };
 
 const GameStatusContext = createContext({} as GameStatusContext);
@@ -47,6 +50,7 @@ const GameStatusContext = createContext({} as GameStatusContext);
 type GameStatusProviderProps = {
     children: ReactNode;
 };
+type TargetMode = "static" | "dynamic";
 
 export function useGameStatus() {
     return useContext(GameStatusContext);
@@ -59,12 +63,12 @@ export function GameStatusProvider({children}: GameStatusProviderProps) {
     const [missedClicks, setMissedClicks] = useState(0);
     const [clicks, setClicks] = useState(0);
     const [targetsClicked, setTargetsClicked] = useState(0);
-    const [targetSize, setTargetSize] = useState(10);
     const [targets, setTargets] = useState([] as TargetProps[]);
     const [gameStarted, setGameStarted] = useState(false);
     const [targetsMissed, setTargetsMissed] = useState(0);
-    const [selectedTimer, setSelectedTimer] = useState(60);
+    const [selectedTimer, setSelectedTimer] = useState(30);
     const [currentTimer, setCurrentTimer] = useState(selectedTimer);
+    const [targetMode, setTargetMode] = useState<TargetMode>("dynamic");
 
     const [gameResolution, setGameResolution] = useState({x: 1200, y: 800} as Position);
 
@@ -75,12 +79,11 @@ export function GameStatusProvider({children}: GameStatusProviderProps) {
     }
 
     const getNewPosition = (x: number, y: number): Position => {
-        let maxX = x - targetSize * 3;
-        let maxY = y - targetSize * 3;
+        let maxX = x - 90;
+        let maxY = y - 90;
         let positionX = Math.floor(Math.random() * maxX);
         let positionY = Math.floor(Math.random() * maxY);
         return {x: positionX, y: positionY};
-        setTargetSize(0);
     };
 
     const createNewTarget = () => {
@@ -90,9 +93,10 @@ export function GameStatusProvider({children}: GameStatusProviderProps) {
                 x: newPosition.x,
                 y: newPosition.y,
             },
-            size: 10,
+            size: targetMode === "static" ? 90 : 10,
             growing: true,
             clicked: false,
+            aliveFor: 0,
         };
 
         return newTarget;
@@ -101,6 +105,7 @@ export function GameStatusProvider({children}: GameStatusProviderProps) {
     function updateTargets() {
         setTargets((prev: TargetProps[]) => {
             prev.forEach((target: TargetProps) => {
+                if (targetMode == "static" && target.aliveFor >= 5) target.size = 0;
                 if (target.size <= 0 && !target.clicked) setTargetsMissed(prev => prev + 1);
             });
             return (prev = prev.filter(t => t.size > 0));
@@ -151,6 +156,8 @@ export function GameStatusProvider({children}: GameStatusProviderProps) {
                 restartStats,
                 setSelectedSpeed,
                 selectedSpeed,
+                targetMode,
+                setTargetMode,
             }}
         >
             {children}
