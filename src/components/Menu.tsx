@@ -12,6 +12,8 @@ export default function Menu() {
         setSelectedSpeed,
         selectedSpeed,
         gameStarted,
+        targetMode,
+        setTargetMode,
     } = useGameStatus();
     const [size, setSize] = useState(2);
 
@@ -20,7 +22,7 @@ export default function Menu() {
         setSize(size);
     }
 
-    function handleDisabled(key: string, value: number) {
+    function handleDisabled(key: string, value: number | string) {
         if (gameStarted) return true;
         switch (key) {
             case "size":
@@ -31,6 +33,9 @@ export default function Menu() {
                 return false;
             case "timer":
                 if (selectedTimer === value) return true;
+                return false;
+            case "target":
+                if (targetMode === value) return true;
                 return false;
         }
     }
@@ -116,6 +121,21 @@ export default function Menu() {
                     }}
                 >
                     90s
+                </Button>
+            </div>
+            <span className="pb-2 text-white fs-3">Target:</span>
+            <div className="input-group mb-3">
+                <Button
+                    disabled={handleDisabled("target", "dynamic")}
+                    onClick={() => setTargetMode("dynamic")}
+                >
+                    Dynamic
+                </Button>
+                <Button
+                    disabled={handleDisabled("target", "static")}
+                    onClick={() => setTargetMode("static")}
+                >
+                    Static
                 </Button>
             </div>
         </Col>

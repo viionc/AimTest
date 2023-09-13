@@ -7,13 +7,12 @@ type Target = {
 };
 
 const Target = (props: {target: TargetProps}) => {
-    const {updateTargets, setTargetsClicked, setScore, gameStarted} = useGameStatus();
+    const {setTargetsClicked, setScore, gameStarted} = useGameStatus();
     const handleClick = (target: TargetProps) => {
         if (!gameStarted) return;
         target.growing = false;
         target.size = 0;
         target.clicked = true;
-        updateTargets();
         setTargetsClicked((prev: number) => (prev += 1));
         setScore((prev: number) => prev + 1);
     };
